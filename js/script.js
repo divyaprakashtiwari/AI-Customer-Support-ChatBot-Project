@@ -12,24 +12,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // UI Elements
     const welcomeScreen = document.getElementById('welcomeScreen');
     const chatInterface = document.getElementById('chatInterface');
-    
+
     const heroChatForm = document.getElementById('heroChatForm');
     const heroInput = document.getElementById('heroInput');
-    
+
     const dockChatForm = document.getElementById('dockChatForm');
     const dockInput = document.getElementById('dockInput');
-    
+
     const chatFeed = document.getElementById('chatFeed');
     const emptyChatState = document.getElementById('emptyChatState');
-    
+
     const btnNewChat = document.getElementById('btnNewChat');
     const btnClearChat = document.getElementById('btnClearChat');
 
     // ==========================================================================
     // FASTAPI BACKEND INTEGRATION
     // ==========================================================================
-    
-    const API_URL = "http://127.0.0.1:8000/chat";
+
+    const API_URL = "https://ai-support-chatbot-backend-07kf.onrender.com/chat";
     const STORAGE_KEY = "adsy_chat_history";
 
     function saveMessageToHistory(role, text, timestamp, sources, id) {
@@ -141,9 +141,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // UI RENDERERS (Exported to window for easy external backend execution)
     // ==========================================================================
 
-    window.renderUserMessage = function(text, timestamp, skipSave) {
+    window.renderUserMessage = function (text, timestamp, skipSave) {
         const time = timestamp || getCurrentTimeFormatted();
-        
+
         const row = document.createElement('div');
         row.className = 'adsy-message-row user-row';
 
@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollToBottom();
     };
 
-    window.renderAIMessage = function(data, timestamp, skipSave) {
+    window.renderAIMessage = function (data, timestamp, skipSave) {
         let text = "";
         let sources = [];
         let messageId = "";
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const time = timestamp || getCurrentTimeFormatted();
-        
+
         if (emptyChatState) {
             emptyChatState.style.display = 'none';
         }
@@ -289,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnClearChat.addEventListener('click', clearChatMessages);
     }
 
-    window.copyMessageText = function(btnElement) {
+    window.copyMessageText = function (btnElement) {
         const bubble = btnElement.closest('.adsy-message-row').querySelector('.adsy-ai-bubble');
         if (bubble) {
             navigator.clipboard.writeText(bubble.innerText).then(() => {
@@ -304,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    window.handleRegenerateClick = async function(btnElement) {
+    window.handleRegenerateClick = async function (btnElement) {
         const aiRow = btnElement.closest('.adsy-message-row');
         if (!aiRow) return;
 
@@ -337,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const replySources = [];
 
             aiBubble.innerHTML = DOMPurify.sanitize(marked.parse(replyText));
-            
+
             // Remove sources view if it exists
             let sourcesEl = aiRow.querySelector('.adsy-ai-sources');
             if (sourcesEl) {
