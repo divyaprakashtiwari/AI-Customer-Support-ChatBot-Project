@@ -29,7 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // FASTAPI BACKEND INTEGRATION
     // ==========================================================================
 
-    const API_URL = "https://ai-support-chatbot-backend-07kf.onrender.com/chat";
+    // Use local backend on port 8000 when running locally, otherwise use Render production backend
+    const API_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+        ? "http://localhost:8000/chat"
+        : "https://ai-support-chatbot-backend-07kf.onrender.com/chat";
     const STORAGE_KEY = "adsy_chat_history";
 
     function saveMessageToHistory(role, text, timestamp, sources, id) {
@@ -178,6 +181,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let sourcesHTML = "";
+        if (sources && sources.length > 0) {
+            const badges = sources
+                .map(src => `<span class="adsy-source-badge"><i class="fa-regular fa-file-pdf"></i> ${escapeHTML(src)}</span>`)
+                .join("");
+            sourcesHTML = `
+                <div class="adsy-ai-sources">
+                    <span class="sources-label">Sources:</span>
+                    ${badges}
+                </div>
+            `;
+        }
 
         const row = document.createElement('div');
         row.className = 'adsy-message-row ai-row';
@@ -334,7 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const botReply = await sendMessageToBot(originalMessage);
             const replyText = typeof botReply === 'object' ? botReply.answer : botReply;
-            const replySources = [];
+            const replySources = (typeof botReply === 'object' && botReply.sources) ? botReply.sources : [];
 
             aiBubble.innerHTML = DOMPurify.sanitize(marked.parse(replyText));
 
@@ -342,6 +356,20 @@ document.addEventListener('DOMContentLoaded', () => {
             let sourcesEl = aiRow.querySelector('.adsy-ai-sources');
             if (sourcesEl) {
                 sourcesEl.remove();
+            }
+
+            // Create and insert new sources if available
+            if (replySources && replySources.length > 0) {
+                const newSourcesEl = document.createElement('div');
+                newSourcesEl.className = 'adsy-ai-sources';
+                const badges = replySources
+                    .map(src => `<span class="adsy-source-badge"><i class="fa-regular fa-file-pdf"></i> ${escapeHTML(src)}</span>`)
+                    .join("");
+                newSourcesEl.innerHTML = `
+                    <span class="sources-label">Sources:</span>
+                    ${badges}
+                `;
+                aiBubble.after(newSourcesEl);
             }
 
             updateStoredAIMessage(aiRow, replyText, replySources);
