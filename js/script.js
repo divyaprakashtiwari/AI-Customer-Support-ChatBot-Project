@@ -181,17 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let sourcesHTML = "";
-        if (sources && sources.length > 0) {
-            const badges = sources
-                .map(src => `<span class="adsy-source-badge"><i class="fa-regular fa-file-pdf"></i> ${escapeHTML(src)}</span>`)
-                .join("");
-            sourcesHTML = `
-                <div class="adsy-ai-sources">
-                    <span class="sources-label">Sources:</span>
-                    ${badges}
-                </div>
-            `;
-        }
 
         const row = document.createElement('div');
         row.className = 'adsy-message-row ai-row';
@@ -356,20 +345,6 @@ document.addEventListener('DOMContentLoaded', () => {
             let sourcesEl = aiRow.querySelector('.adsy-ai-sources');
             if (sourcesEl) {
                 sourcesEl.remove();
-            }
-
-            // Create and insert new sources if available
-            if (replySources && replySources.length > 0) {
-                const newSourcesEl = document.createElement('div');
-                newSourcesEl.className = 'adsy-ai-sources';
-                const badges = replySources
-                    .map(src => `<span class="adsy-source-badge"><i class="fa-regular fa-file-pdf"></i> ${escapeHTML(src)}</span>`)
-                    .join("");
-                newSourcesEl.innerHTML = `
-                    <span class="sources-label">Sources:</span>
-                    ${badges}
-                `;
-                aiBubble.after(newSourcesEl);
             }
 
             updateStoredAIMessage(aiRow, replyText, replySources);
