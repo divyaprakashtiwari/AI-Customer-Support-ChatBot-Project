@@ -40,7 +40,7 @@ def run_ingestion():
 
     # Clear old documents to prevent duplicate matches in search
     print("Clearing old documents from Supabase...")
-   supabase.table("documents").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
+    supabase.table("documents").delete().neq("id", "00000000-0000-0000-0000-000000000000").execute()
 
     for i, chunk in enumerate(chunks):
         vector = embeddings.embed_query(chunk.page_content)
