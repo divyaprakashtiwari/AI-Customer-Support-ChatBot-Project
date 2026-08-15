@@ -38,6 +38,10 @@ def run_ingestion():
 
     supabase = create_client(settings.supabase_url, settings.supabase_service_key)
 
+    # Clear old documents to prevent duplicate matches in search
+    print("Clearing old documents from Supabase...")
+    supabase.table("documents").delete().neq("id", 0).execute()
+
     for i, chunk in enumerate(chunks):
         vector = embeddings.embed_query(chunk.page_content)
         supabase.table("documents").insert({
